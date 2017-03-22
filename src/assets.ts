@@ -8,6 +8,19 @@ export namespace Images {
     }
 }
 
+export namespace Spritesheets {
+    export class SpritesheetsMetalslugMummy {
+        static getName(): string { return 'metalslug_mummy'; };
+
+        static getPNG(): string { return require('assets/spritesheets/metalslug_mummy.[37,45,18,0,0].png'); };
+        static getFrameWidth(): number { return 37; };
+        static getFrameHeight(): number { return 45; };
+        static getFrameMax(): number { return 18; };
+        static getMargin(): number { return 0; };
+        static getSpacing(): number { return 0; };
+    }
+}
+
 export namespace Atlases {
     enum AtlasesPreloadSpritesArrayFrames {
         PreloadBar = <any>'preload_bar.png',
@@ -131,6 +144,25 @@ export namespace Text {
     class IExistSoTypeScriptWillNotComplainAboutAnEmptyNamespace {}
 }
 
+export namespace Scripts {
+    export class ScriptsBlurX {
+        static getName(): string { return 'BlurX'; };
+
+        static getJS(): string { return require('assets/scripts/BlurX.js'); };
+    }
+    export class ScriptsBlurY {
+        static getName(): string { return 'BlurY'; };
+
+        static getJS(): string { return require('assets/scripts/BlurY.js'); };
+    }
+}
+export namespace Shaders {
+    export class ShadersPixelate {
+        static getName(): string { return 'pixelate'; };
+
+        static getFRAG(): string { return require('assets/shaders/pixelate.frag'); };
+    }
+}
 export namespace Misc {
     class IExistSoTypeScriptWillNotComplainAboutAnEmptyNamespace {}
 }

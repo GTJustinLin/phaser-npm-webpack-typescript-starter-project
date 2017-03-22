@@ -4,14 +4,18 @@ export default class Title extends Phaser.State {
     private backgroundTemplateSprite: Phaser.Sprite = null;
     private googleFontText: Phaser.Text = null;
     private localFontText: Phaser.Text = null;
+    private pixelateShader: Phaser.Filter = null;
     private bitmapFontText: Phaser.BitmapText = null;
+    private blurXFilter: Phaser.Filter.BlurX = null;
+    private blurYFilter: Phaser.Filter.BlurY = null;
     private sfxAudiosprite: Phaser.AudioSprite = null;
+    private mummySpritesheet: Phaser.Sprite = null;
 
     // This is any[] not string[] due to a limitation in TypeScript at the moment;
     // despite string enums working just fine, they are not officially supported so we trick the compiler into letting us do it anyway.
     private sfxLaserSounds: any[] = null;
 
-    public preload(): void {
+    public create(): void {
         this.backgroundTemplateSprite = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, Assets.Images.ImagesBackgroundTemplate.getName());
         this.backgroundTemplateSprite.anchor.setTo(0.5);
 
@@ -20,13 +24,27 @@ export default class Title extends Phaser.State {
         });
         this.googleFontText.anchor.setTo(0.5);
 
-        this.localFontText = this.game.add.text(this.game.world.centerX, this.game.world.centerY, 'Local Fonts!', {
-            font: '50px ' + Assets.CustomWebFonts.Fonts2DumbWebfont.getFamily()
+        this.localFontText = this.game.add.text(this.game.world.centerX, this.game.world.centerY, 'Local Fonts + Shaders .frag (Pixelate here)!', {
+            font: '30px ' + Assets.CustomWebFonts.Fonts2DumbWebfont.getFamily()
         });
         this.localFontText.anchor.setTo(0.5);
 
-        this.bitmapFontText = this.game.add.bitmapText(this.game.world.centerX, this.game.world.centerY + 100, Assets.BitmapFonts.FontsFontFnt.getName(), 'Bitmap Fonts!', 50);
+        this.pixelateShader = new Phaser.Filter(this.game, null, this.game.cache.getShader(Assets.Shaders.ShadersPixelate.getName()));
+        this.localFontText.filters = [this.pixelateShader];
+
+        this.bitmapFontText = this.game.add.bitmapText(this.game.world.centerX, this.game.world.centerY + 100, Assets.BitmapFonts.FontsFontFnt.getName(), 'Bitmap Fonts + Filters .js (Blur here)!', 40);
         this.bitmapFontText.anchor.setTo(0.5);
+
+        this.blurXFilter = this.game.add.filter(Assets.Scripts.ScriptsBlurX.getName()) as Phaser.Filter.BlurX;
+        this.blurXFilter.blur = 8;
+        this.blurYFilter = this.game.add.filter(Assets.Scripts.ScriptsBlurY.getName()) as Phaser.Filter.BlurY;
+        this.blurYFilter.blur = 2;
+
+        this.bitmapFontText.filters = [this.blurXFilter, this.blurYFilter];
+
+        this.mummySpritesheet = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY + 175, Assets.Spritesheets.SpritesheetsMetalslugMummy.getName());
+        this.mummySpritesheet.animations.add('walk');
+        this.mummySpritesheet.animations.play('walk', 30, true);
 
         this.sfxAudiosprite = this.game.add.audioSprite(Assets.Audiosprites.AudiospritesSfx.getName());
 
@@ -43,10 +61,6 @@ export default class Title extends Phaser.State {
             availableSFX.Laser8,
             availableSFX.Laser9
         ];
-    }
-
-    public create(): void {
-        this.game.camera.flash(0x000000, 1000);
 
         this.game.sound.play(Assets.Audio.AudioMusic.getName(), 0.2, true);
 
@@ -54,5 +68,7 @@ export default class Title extends Phaser.State {
         this.backgroundTemplateSprite.events.onInputDown.add(() => {
             this.sfxAudiosprite.play(Phaser.ArrayUtils.getRandomItem(this.sfxLaserSounds));
         });
+
+        this.game.camera.flash(0x000000, 1000);
     }
 }
